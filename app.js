@@ -3,9 +3,7 @@ const addButton = document.querySelector('.task-row-wrapper button');
 const todoList = document.getElementById('incompleteTasks');
 const completedList = document.getElementById('completed-tasks');
 
-const createNewTaskElement = function (taskString) {
-  const listItem = document.createElement('li');
-
+const createTaskControls = function (taskString) {
   const checkbox = document.createElement('input');
   const label = document.createElement('label');
   const editInput = document.createElement('input');
@@ -28,6 +26,14 @@ const createNewTaskElement = function (taskString) {
   deleteButtonImg.src = './remove.svg';
   deleteButton.appendChild(deleteButtonImg);
 
+  return { checkbox, label, editInput, editButton, deleteButton };
+};
+
+const createNewTaskElement = function (taskString) {
+  const listItem = document.createElement('li');
+  const { checkbox, label, editInput, editButton, deleteButton } =
+    createTaskControls(taskString);
+
   listItem.appendChild(checkbox);
   listItem.appendChild(label);
   listItem.appendChild(editInput);
@@ -46,20 +52,27 @@ const addTask = function () {
   taskInput.value = '';
 };
 
+const saveTaskEdit = function (label, editInput, editButton) {
+  label.innerText = editInput.value;
+  editButton.innerText = 'Edit';
+};
+
+const startTaskEdit = function (label, editInput, editButton) {
+  editInput.value = label.innerText;
+  editButton.innerText = 'Save';
+};
+
 const editTask = function () {
   const listItem = this.parentNode;
-
   const editInput = listItem.querySelector('input[type=text]');
   const label = listItem.querySelector('label');
   const editButton = listItem.querySelector('.edit');
   const isEditMode = listItem.classList.contains('editMode');
 
   if (isEditMode) {
-    label.innerText = editInput.value;
-    editButton.innerText = 'Edit';
+    saveTaskEdit(label, editInput, editButton);
   } else {
-    editInput.value = label.innerText;
-    editButton.innerText = 'Save';
+    startTaskEdit(label, editInput, editButton);
   }
 
   listItem.classList.toggle('editMode');
